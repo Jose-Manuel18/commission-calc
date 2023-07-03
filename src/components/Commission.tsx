@@ -1,8 +1,10 @@
 "use client"
 import { useRef, useState } from "react"
 import { motion } from "framer-motion"
-
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
 export function CommissionCalculator() {
+  const { setTheme } = useTheme()
   const [sales, setSales] = useState<number>(0)
   const [commissionRate, setCommissionRate] = useState(0)
   const [commission, setCommission] = useState(0)
@@ -22,10 +24,10 @@ export function CommissionCalculator() {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full max-w-xs">
-        <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <form className="border-[0.5px] shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
               htmlFor="sales"
             >
               Sales Amount ($)
