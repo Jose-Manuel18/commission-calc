@@ -151,13 +151,8 @@ export const columns: ColumnDef<Payment>[] = [
 // }
 export function DataTableDemo({ userId }: { userId: number }) {
   const [data, setData] = React.useState<Payment[]>([])
-  const {
-    data: employees,
-    isLoading,
-    isError,
-    refetch,
-    isRefetching,
-  } = useQuery<EmployeesProps>({
+
+  const { refetch, isRefetching } = useQuery<EmployeesProps>({
     queryKey: ["employee", userId],
     queryFn: async (): Promise<EmployeesProps> => {
       const response = await fetch(`/api/employee/${userId}`, {
@@ -167,12 +162,13 @@ export function DataTableDemo({ userId }: { userId: number }) {
           "Content-Type": "application/json",
         },
       })
-      if (response.ok) {
-        const result = await response.json()
-        setData(result)
-        refetch()
+      if (!response.ok) {
+        throw new Error("Network response was not ok")
       }
-      return response.json()
+      const result = await response.json()
+      setData(result)
+      await refetch()
+      return result
     },
     refetchInterval: 1000 * 60, // Refetch every 60 seconds
     staleTime: 1000 * 60,

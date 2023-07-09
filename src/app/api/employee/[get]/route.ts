@@ -2,11 +2,11 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 
 export async function GET(_: Request, { params }: { params: { get: string } }) {
-  const userId = params.get
+  const userId = parseInt(params.get)
   try {
     const employee = await prisma.employee.findMany({
       where: {
-        userId: 4,
+        userId: userId,
       },
     })
     return NextResponse.json(employee, { status: 200 })

@@ -127,7 +127,6 @@ import React, { useState } from "react"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -140,7 +139,7 @@ interface CommissionCalculatorProps {
 
 export const CommissionCalculator: React.FC<CommissionCalculatorProps> = ({
   name,
-  id,
+
   commissionPercent,
 }) => {
   const [dealValue, setDealValue] = useState<number>(0)

@@ -13,7 +13,7 @@ import {
 } from "./ui/form"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
-import { Payment } from "./DataTable"
+
 const formSchema = z.object({
   nombre: z.string().min(2, {
     message: "Username must be at least 2 characters.",
