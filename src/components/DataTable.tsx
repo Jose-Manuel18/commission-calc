@@ -167,7 +167,6 @@ export function DataTableDemo({ userId }: { userId: number }) {
       }
       const result = await response.json()
       setData(result)
-      await refetch()
       return result
     },
     refetchInterval: 1000 * 60, // Refetch every 60 seconds
@@ -221,7 +220,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end">
-            <EmployeeForm closePopover={closePopover} />
+            <EmployeeForm refetch={refetch} closePopover={closePopover} />
           </PopoverContent>
         </Popover>
         <DropdownMenu>

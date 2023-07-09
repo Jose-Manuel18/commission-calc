@@ -13,6 +13,7 @@ import {
 } from "./ui/form"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
+import { useMutation } from "@tanstack/react-query"
 
 const formSchema = z.object({
   nombre: z.string().min(2, {
@@ -21,9 +22,9 @@ const formSchema = z.object({
 })
 interface EmployeeFormProps {
   closePopover: () => void
+  refetch: () => void
 }
-export function EmployeeForm({ closePopover }: EmployeeFormProps) {
-  // 1. Define your form.
+export function EmployeeForm({ closePopover, refetch }: EmployeeFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,35 +32,30 @@ export function EmployeeForm({ closePopover }: EmployeeFormProps) {
     },
   })
 
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
-    const response = await fetch("api/employee/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: values.nombre,
-      }),
-    })
-    if (!response.ok) {
-      console.log("error")
-    } else {
+  const mutation = useMutation({
+    mutationKey: ["createEmployee"],
+    mutationFn: (values: z.infer<typeof formSchema>) => {
+      return fetch("api/employee/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: values.nombre,
+        }),
+      })
+    },
+    onSuccess: () => {
+      refetch()
       closePopover()
-    }
-    console.log(response)
+    },
+  })
 
-    // const payment: Payment = {
-    //   id: "some_id", // You'll want to replace this with a real ID
-    //   amount: 0, // You'll want to replace this with a real amount
-    //   status: "pending", // Set the initial status
-    //   nombre: values.nombre, // Set the nombre from the form input
-    // }
-    // console.log(payment)
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutation.mutate(values)
   }
+  console.log(mutation.isSuccess)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
