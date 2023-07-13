@@ -1,8 +1,7 @@
 // import { CommissionCalculator } from "@/components/Commission"
 import { DataTableDemo } from "@/components/DataTable"
-import { prisma } from "@/lib/prisma"
+
 import { Metadata } from "next"
-import { useState } from "react"
 
 export const metadata: Metadata = {
   title: "Commission",

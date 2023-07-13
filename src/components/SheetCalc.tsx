@@ -55,7 +55,7 @@ import { LastPayments } from "./LastPayments"
 import { forwardRef } from "react"
 
 export const Modal = forwardRef<HTMLButtonElement, SheetCalcProps>(
-  ({ children, name, id, commission, pay }, ref) => {
+  ({ commission, pay }, ref) => {
     return (
       <AlertDialog>
         <AlertDialogTrigger ref={ref}></AlertDialogTrigger>

@@ -39,19 +39,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { EmployeeForm } from "./EmployeeForm"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import Link from "next/link"
 
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "./ui/sheet"
-// import { SheetCalc } from "./SheetCalc"
-import { useRouter } from "next/navigation"
-import { useToast } from "./ui/use-toast"
 import { Modal } from "./SheetCalc"
 export interface EmployeesProps {
   id: number
@@ -184,10 +172,10 @@ export const columns: ColumnDef<Payment>[] = [
 
 // }
 export function DataTableDemo({ userId }: { userId: number }) {
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const [data, setData] = React.useState<Payment[]>([])
   const [eliminate, setEliminate] = React.useState<SelectedEmployeeProps[]>([])
-  const { push } = useRouter()
+  // const { push } = useRouter()
   const { refetch } = useQuery<EmployeesProps>({
     queryKey: ["employee", userId],
     queryFn: async (): Promise<EmployeesProps> => {
@@ -217,7 +205,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
     [],
   )
   const closePopover = () => closeButtonRef.current?.click()
-  const openSheet = () => sheetRef.current?.click()
+  // const openSheet = () => sheetRef.current?.click()
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
