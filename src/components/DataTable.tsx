@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Loader2 } from "lucide-react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -37,8 +38,21 @@ import {
 } from "@/components/ui/table"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { EmployeeForm } from "./EmployeeForm"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import Link from "next/link"
 
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet"
+// import { SheetCalc } from "./SheetCalc"
+import { useRouter } from "next/navigation"
+import { useToast } from "./ui/use-toast"
+import { Modal } from "./SheetCalc"
 export interface EmployeesProps {
   id: number
   name: string
@@ -55,7 +69,9 @@ export type Payment = {
   commission: number
   pay: number
 }
-
+interface SelectedEmployeeProps {
+  id: string
+}
 export const columns: ColumnDef<Payment>[] = [
   {
     id: "select",
@@ -70,6 +86,7 @@ export const columns: ColumnDef<Payment>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onClick={(e) => e.stopPropagation()}
         aria-label="Select row"
       />
     ),
@@ -91,7 +108,7 @@ export const columns: ColumnDef<Payment>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Nombre
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -99,8 +116,25 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
+    accessorKey: "commission",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Comisión
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => (
+      <div className="lowercase pl-4">{row.getValue("commission")}%</div>
+    ),
+  },
+  {
     accessorKey: "pay",
-    header: () => <div className="text-right">Pay</div>,
+    header: () => <div className="text-right">Monto</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("pay"))
 
@@ -135,11 +169,11 @@ export const columns: ColumnDef<Payment>[] = [
                 navigator.clipboard.writeText(payment.pay.toString())
               }
             >
-              Copy payment ID
+              Copiar monto
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem></DropdownMenuItem>
+            {/* <DropdownMenuItem>View payment details</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -150,9 +184,11 @@ export const columns: ColumnDef<Payment>[] = [
 
 // }
 export function DataTableDemo({ userId }: { userId: number }) {
+  const { toast } = useToast()
   const [data, setData] = React.useState<Payment[]>([])
-
-  const { refetch, isRefetching } = useQuery<EmployeesProps>({
+  const [eliminate, setEliminate] = React.useState<SelectedEmployeeProps[]>([])
+  const { push } = useRouter()
+  const { refetch } = useQuery<EmployeesProps>({
     queryKey: ["employee", userId],
     queryFn: async (): Promise<EmployeesProps> => {
       const response = await fetch(`/api/employee/${userId}`, {
@@ -169,15 +205,19 @@ export function DataTableDemo({ userId }: { userId: number }) {
       setData(result)
       return result
     },
-    refetchInterval: 1000 * 60, // Refetch every 60 seconds
-    staleTime: 1000 * 60,
+    refetchInterval: 1000 * 60,
+
+    // Refetch every 60 seconds
+    // staleTime: 1000 * 60,
   })
   const closeButtonRef = React.useRef<HTMLButtonElement>(null)
+  const sheetRef = React.useRef<HTMLButtonElement>(null)
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   )
   const closePopover = () => closeButtonRef.current?.click()
+  const openSheet = () => sheetRef.current?.click()
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -200,29 +240,73 @@ export function DataTableDemo({ userId }: { userId: number }) {
       rowSelection,
     },
   })
-  console.log("isRefetching", isRefetching)
-
+  console.log(
+    "rows",
+    table.getFilteredSelectedRowModel().flatRows.map((row) => row.original),
+  )
+  React.useEffect(() => {
+    const employeeSelected = table
+      .getFilteredSelectedRowModel()
+      .flatRows.map((row) => {
+        return {
+          id: row.original.id,
+        }
+      })
+    setEliminate(employeeSelected)
+  }, [rowSelection])
+  const { mutate, isLoading } = useMutation({
+    mutationFn: async (ids: SelectedEmployeeProps[]) => {
+      await fetch(`/api/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids }),
+      })
+    },
+    onSuccess: () => refetch(),
+  })
   return (
-    <div className="w-full">
+    <div className=" w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <Popover>
-          <PopoverTrigger ref={closeButtonRef} asChild>
-            <Button variant="outline" className="ml-2">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent align="end">
-            <EmployeeForm refetch={refetch} closePopover={closePopover} />
-          </PopoverContent>
-        </Popover>
+        {table.getFilteredSelectedRowModel().rows.length ? (
+          <>
+            {isLoading ? (
+              <Button variant={"destructive"} disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Eliminando
+              </Button>
+            ) : (
+              <Button variant={"destructive"} onClick={() => mutate(eliminate)}>
+                Eliminar
+              </Button>
+            )}
+          </>
+        ) : (
+          <>
+            <Input
+              placeholder="Filter emails..."
+              value={
+                (table.getColumn("name")?.getFilterValue() as string) ?? ""
+              }
+              onChange={(event) =>
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+            <Popover>
+              <PopoverTrigger ref={closeButtonRef} asChild>
+                <Button variant="outline" className="ml-2">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end">
+                <EmployeeForm refetch={refetch} closePopover={closePopover} />
+              </PopoverContent>
+            </Popover>
+          </>
+        )}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="hidden sm:flex ml-auto">
@@ -250,7 +334,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+      <div className=" rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -276,15 +360,33 @@ export function DataTableDemo({ userId }: { userId: number }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      onClick={() => sheetRef.current?.click()}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
                       )}
                     </TableCell>
                   ))}
+                  {/* <SheetCalc
+                    name={row.original.name}
+                    commission={row.original.commission}
+                    id={row.original.id}
+                    pay={row.original.pay}
+                    ref={sheetRef}
+                  /> */}
+                  <Modal
+                    name={row.original.name}
+                    commission={row.original.commission}
+                    id={row.original.id}
+                    pay={row.original.pay}
+                    ref={sheetRef}
+                  />
                 </TableRow>
               ))
             ) : (

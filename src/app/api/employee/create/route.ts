@@ -4,6 +4,7 @@ import { NextResponse } from "next/server"
 interface BodyRequest {
   name: string
   userId?: number
+  commission: string
 }
 
 export async function POST(req: Request) {
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
   try {
     body = await req.json()
     if (
-      typeof body.name !== "string" ||
+      (typeof body.name !== "string" && typeof body.commission !== "string") ||
       (body.userId && typeof body.userId !== "number")
     ) {
       throw new Error("Invalid input")
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
       data: {
         name: body.name,
         userId: 4,
-        commission: 0,
+        commission: +body.commission,
         pay: 0,
       },
     })

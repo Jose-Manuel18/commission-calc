@@ -1,150 +1,109 @@
 // "use client"
-// import { useRef, useState } from "react"
-// import { motion } from "framer-motion"
-// import { Moon, Sun } from "lucide-react"
-// import { useTheme } from "next-themes"
-// export function CommissionCalculator() {
-//   const { setTheme } = useTheme()
-//   const [sales, setSales] = useState<number>(0)
-//   const [commissionRate, setCommissionRate] = useState(0)
-//   const [commission, setCommission] = useState(0)
-//   const salesRef = useRef<HTMLInputElement>(null)
-//   const commissionRef = useRef<HTMLInputElement>(null)
-//   const calculateCommission = () => {
-//     const commission = (sales * commissionRate) / 100
-//     setCommission(commission)
+// import React, { useState } from "react"
+// import {
+//   Card,
+//   CardContent,
+//   CardFooter,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card"
+// interface CommissionCalculatorProps {
+//   id: string
+//   commissionPercent: number
+//   pay: number
+// }
+
+// export const CommissionCalculator: React.FC<CommissionCalculatorProps> = ({
+//   commissionPercent,
+//   pay,
+// }) => {
+//   const [dealValue, setDealValue] = useState<number>(0)
+//   const [totalCommission, setTotalCommission] = useState<number>(0)
+
+//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setDealValue(Number(e.target.value))
 //   }
-//   console.log(sales)
+
+//   const calculateCommission = () => {
+//     const commissionAmount = dealValue * (commissionPercent / 100)
+//     setTotalCommission((prevTotal) => prevTotal + commissionAmount)
+//     setDealValue(0)
+//   }
 
 //   return (
-//     <motion.div
-//       className="container justify-center flex p-4"
-//       initial={{ opacity: 0 }}
-//       animate={{ opacity: 1 }}
-//       transition={{ duration: 0.5 }}
-//     >
-//       <div className="w-full max-w-xs">
-//         <form className="border-[0.5px] shadow-md rounded px-8 pt-6 pb-8 mb-4">
+//     <Card>
+//       <CardHeader>
+//         <CardTitle>Commission Calculator</CardTitle>
+//         {/* <CardDescription>Card Description</CardDescription> */}
+//       </CardHeader>
+//       <CardContent>
+//         <div className="p-8  rounded shadow-md">
 //           <div className="mb-4">
-//             <label
-//               className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
-//               htmlFor="sales"
-//             >
-//               Sales Amount ($)
-//             </label>
-//             <div className="flex items-center justify-center shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+//             <label className="block text-sm font-medium ">Deal Value</label>
+//             <div className="flex">
 //               <input
-//                 ref={salesRef}
-//                 className="w-full focus:outline-none focus:shadow-outline"
-//                 id="sales"
 //                 type="number"
-//                 placeholder="Sales amount"
-//                 onChange={(e) => setSales(parseInt(e.target.value))}
+//                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+//                 value={dealValue}
+//                 onChange={handleInputChange}
 //               />
-//               <svg
-//                 xmlns="http://www.w3.org/2000/svg"
-//                 fill="none"
-//                 viewBox="0 0 24 24"
-//                 stroke="currentColor"
-//                 className={`flex ml-2 w-4 h-4 cursor-pointer text-black ${
-//                   sales === 0 ? "hidden" : "block"
-//                 }`}
-//                 onClick={() => {
-//                   setSales(0)
-//                   if (salesRef.current) {
-//                     salesRef.current.value = ""
-//                   }
-//                 }}
+//               <button
+//                 onClick={calculateCommission}
+//                 className="ml-2 px-3 py-2  bg-indigo-500 rounded-md hover:bg-indigo-600"
 //               >
-//                 <path
-//                   strokeLinecap="round"
-//                   strokeLinejoin="round"
-//                   strokeWidth={2}
-//                   d="M6 18L18 6M6 6l12 12"
-//                 />
-//               </svg>
+//                 Add Commission
+//               </button>
 //             </div>
 //           </div>
-//           <div className="mb-6">
-//             <label
-//               className="block text-gray-700 text-sm font-bold mb-2"
-//               htmlFor="commission-rate"
-//             >
-//               Commission Rate (%)
-//             </label>
-//             <div className="flex items-center justify-center shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-//               <input
-//                 ref={commissionRef}
-//                 className=" w-full focus:outline-none focus:shadow-outline"
-//                 id="commission-rate"
-//                 type="number"
-//                 placeholder="Commission rate"
-//                 onChange={(e) => setCommissionRate(parseInt(e.target.value))}
-//               />
-//               <svg
-//                 xmlns="http://www.w3.org/2000/svg"
-//                 fill="none"
-//                 viewBox="0 0 24 24"
-//                 stroke="currentColor"
-//                 className={`flex ml-2 w-4 h-4 cursor-pointer text-black ${
-//                   commissionRate === 0 ? "hidden" : "block"
-//                 }`}
-//                 onClick={() => {
-//                   setCommissionRate(0)
-//                   if (commissionRef.current) {
-//                     commissionRef.current.value = ""
-//                   }
-//                 }}
-//               >
-//                 <path
-//                   strokeLinecap="round"
-//                   strokeLinejoin="round"
-//                   strokeWidth={2}
-//                   d="M6 18L18 6M6 6l12 12"
-//                 />
-//               </svg>
-//             </div>
+//           <div className="mb-4">
+//             <label className="block text-sm font-medium ">Total</label>
+//             <p className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 text-indigo-500 font-bold">
+//               {totalCommission.toFixed(2)}
+//             </p>
 //           </div>
-//           <div className="flex items-center justify-between">
-//             <button
-//               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-//               type="button"
-//               onClick={calculateCommission}
-//             >
-//               Calculate
-//             </button>
-//           </div>
-//         </form>
-//         <p className="text-center text-white text-md">
-//           Your commission is: ${commission}
-//         </p>
-//       </div>
-//     </motion.div>
+//         </div>
+//       </CardContent>
+//       <CardFooter>
+//         <p>Card Footer</p>
+//       </CardFooter>
+//     </Card>
 //   )
 // }
-"use client"
-import React, { useState } from "react"
+
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { useToast } from "@/components/ui/use-toast"
+import { useRef, useState } from "react"
 interface CommissionCalculatorProps {
-  name: string
-  id: number
+  id?: string
   commissionPercent: number
+  pay?: number
+  totalAmount: number
 }
-
-export const CommissionCalculator: React.FC<CommissionCalculatorProps> = ({
-  name,
-
+export function CommissionCalculator({
+  totalAmount,
   commissionPercent,
-}) => {
+}: CommissionCalculatorProps) {
+  const { toast } = useToast()
   const [dealValue, setDealValue] = useState<number>(0)
   const [totalCommission, setTotalCommission] = useState<number>(0)
-
+  const montoRef = useRef<HTMLInputElement>(null)
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDealValue(Number(e.target.value))
   }
@@ -152,46 +111,57 @@ export const CommissionCalculator: React.FC<CommissionCalculatorProps> = ({
   const calculateCommission = () => {
     const commissionAmount = dealValue * (commissionPercent / 100)
     setTotalCommission((prevTotal) => prevTotal + commissionAmount)
-    setDealValue(0)
+    if (montoRef.current) {
+      montoRef.current.value = ""
+    }
   }
-
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>Commission Calculator for {name}</CardTitle>
-        {/* <CardDescription>Card Description</CardDescription> */}
+        <CardTitle>Create project</CardTitle>
+        <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="p-8  rounded shadow-md">
-          <div className="mb-4">
-            <label className="block text-sm font-medium ">Deal Value</label>
-            <div className="flex">
-              <input
+        <form>
+          <div className="grid w-full items-center gap-4">
+            <div className="flex text-left flex-col space-y-1.5">
+              <Label htmlFor="monto">Monto</Label>
+              <Input
+                ref={montoRef}
                 type="number"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                value={dealValue}
+                id="monto"
+                placeholder="Añadir monto"
                 onChange={handleInputChange}
               />
-              <button
-                onClick={calculateCommission}
-                className="ml-2 px-3 py-2  bg-indigo-500 rounded-md hover:bg-indigo-600"
-              >
-                Add Commission
-              </button>
+            </div>
+            <div className="flex text-left flex-col space-y-1.5">
+              <Label htmlFor="comision">Comisión</Label>
+              <Input
+                type="number"
+                id="comision"
+                placeholder={commissionPercent.toString()}
+                defaultValue={commissionPercent}
+              />
             </div>
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium ">
-              Total Commission
-            </label>
-            <p className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 text-indigo-500 font-bold">
-              {totalCommission.toFixed(2)}
-            </p>
-          </div>
-        </div>
+        </form>
       </CardContent>
-      <CardFooter>
-        <p>Card Footer</p>
+      <CardFooter className="flex justify-between">
+        <Button onClick={calculateCommission}> Sumar</Button>
+
+        <Button
+          onClick={() => {
+            navigator.clipboard.writeText(totalAmount.toString())
+            toast({
+              description: "Monto copiado!",
+            })
+          }}
+          variant={"outline"}
+          className="cursor-text "
+        >
+          {" "}
+          ${totalCommission.toFixed(2)}
+        </Button>
       </CardFooter>
     </Card>
   )

@@ -14,10 +14,14 @@ import {
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { useMutation } from "@tanstack/react-query"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
   nombre: z.string().min(2, {
     message: "Username must be at least 2 characters.",
+  }),
+  comision: z.string().min(1, {
+    message: "Commission must be at least 0.",
   }),
 })
 interface EmployeeFormProps {
@@ -29,10 +33,11 @@ export function EmployeeForm({ closePopover, refetch }: EmployeeFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       nombre: "",
+      comision: "",
     },
   })
 
-  const mutation = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationKey: ["createEmployee"],
     mutationFn: (values: z.infer<typeof formSchema>) => {
       return fetch("api/employee/create", {
@@ -42,6 +47,7 @@ export function EmployeeForm({ closePopover, refetch }: EmployeeFormProps) {
         },
         body: JSON.stringify({
           name: values.nombre,
+          commission: values.comision,
         }),
       })
     },
@@ -52,9 +58,9 @@ export function EmployeeForm({ closePopover, refetch }: EmployeeFormProps) {
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutation.mutate(values)
+    mutate(values)
+    console.log(values)
   }
-  console.log(mutation.isSuccess)
 
   return (
     <Form {...form}>
@@ -62,20 +68,45 @@ export function EmployeeForm({ closePopover, refetch }: EmployeeFormProps) {
         <FormField
           control={form.control}
           name="nombre"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nombre</FormLabel>
-              <FormControl>
-                <Input placeholder="Juanita" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>Nombre</FormLabel>
+                <FormControl>
+                  <Input placeholder="Juanita" {...field} />
+                </FormControl>
+                <FormDescription>Nombre del empleado.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
         />
-        <Button type="submit">Submit</Button>
+        <FormField
+          control={form.control}
+          name="comision"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel>Comisión</FormLabel>
+                <FormControl typeof="number">
+                  <Input placeholder="15%" type="number" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Aqui va la comisión del empleado.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
+        />
+        {isLoading ? (
+          <Button type="submit" disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Añadiendo
+          </Button>
+        ) : (
+          <Button type="submit">Submit</Button>
+        )}
       </form>
     </Form>
   )
