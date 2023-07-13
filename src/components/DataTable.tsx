@@ -289,7 +289,11 @@ export function DataTableDemo({ userId }: { userId: number }) {
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="end">
-                <EmployeeForm refetch={refetch} closePopover={closePopover} />
+                <EmployeeForm
+                  userId={userId}
+                  refetch={refetch}
+                  closePopover={closePopover}
+                />
               </PopoverContent>
             </Popover>
           </>

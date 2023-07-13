@@ -20,15 +20,23 @@ const formSchema = z.object({
   nombre: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  comision: z.string().min(1, {
-    message: "Commission must be at least 0.",
-  }),
+  comision: z
+    .string()
+    .min(1, {
+      message: "Commission must be at least 0.",
+    })
+    .max(2),
 })
 interface EmployeeFormProps {
   closePopover: () => void
   refetch: () => void
+  userId: number
 }
-export function EmployeeForm({ closePopover, refetch }: EmployeeFormProps) {
+export function EmployeeForm({
+  closePopover,
+  refetch,
+  userId,
+}: EmployeeFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,6 +56,7 @@ export function EmployeeForm({ closePopover, refetch }: EmployeeFormProps) {
         body: JSON.stringify({
           name: values.nombre,
           commission: values.comision,
+          userId: userId,
         }),
       })
     },

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 
 interface BodyRequest {
   name: string
-  userId?: number
+  userId: number
   commission: string
 }
 
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const employee = await prisma.employee.create({
       data: {
         name: body.name,
-        userId: 4,
+        userId: body.userId,
         commission: +body.commission,
         pay: 0,
       },

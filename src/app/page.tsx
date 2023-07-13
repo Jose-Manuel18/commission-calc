@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const userId = 4
+  const userId = 1
   // const user = await fetchUser(userId)
 
   return (
