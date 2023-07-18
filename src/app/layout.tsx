@@ -65,7 +65,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.ico" />
         <meta
           name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover"
         />
       </head>
       <body className={inter.className}>
@@ -75,7 +75,7 @@ export default function RootLayout({
               <Header />
               {children}
             </main>
-              <Toaster />
+            <Toaster />
           </ThemeProvider>
         </Providers>
       </body>

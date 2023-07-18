@@ -70,7 +70,7 @@ export const Modal = forwardRef<HTMLButtonElement, SheetCalcProps>(
               <LastPayments />
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="pb-16">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction>Continue</AlertDialogAction>
           </AlertDialogFooter>
