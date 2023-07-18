@@ -10,10 +10,9 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const userId = 1
-  // const user = await fetchUser(userId)
 
   return (
-    <div className="flex w-full max-w-full items-center justify-center p-4">
+    <div className=" p-4">
       <DataTableDemo userId={userId} />
     </div>
   )

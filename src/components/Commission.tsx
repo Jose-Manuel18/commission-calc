@@ -110,7 +110,7 @@ export function CommissionCalculator({
     }
   }
   return (
-    <Card className="w-full">
+    <Card className="w-full rounded-t-md rounded-b-none">
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
@@ -133,7 +133,7 @@ export function CommissionCalculator({
               <Input
                 type="number"
                 id="comision"
-                placeholder={commissionPercent.toString()}
+                placeholder={commissionPercent.toString() + "%"}
                 defaultValue={commissionPercent}
               />
             </div>

@@ -71,9 +71,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Header />
-            <main>{children}</main>
-            <Toaster />
+            <main>
+              <Header />
+              {children}
+            </main>
+              <Toaster />
           </ThemeProvider>
         </Providers>
       </body>

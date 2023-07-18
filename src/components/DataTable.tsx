@@ -23,8 +23,6 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -41,6 +39,7 @@ import { EmployeeForm } from "./EmployeeForm"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 import { Modal } from "./SheetCalc"
+import { toast } from "./ui/use-toast"
 export interface EmployeesProps {
   id: number
   name: string
@@ -151,17 +150,19 @@ export const columns: ColumnDef<Payment>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation()
                 navigator.clipboard.writeText(payment.pay.toString())
-              }
+                toast({
+                  title: "Monto copiado!",
+                  duration: 2000,
+                })
+              }}
             >
               Copiar monto
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem></DropdownMenuItem>
-            {/* <DropdownMenuItem>View payment details</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -172,11 +173,10 @@ export const columns: ColumnDef<Payment>[] = [
 
 // }
 export function DataTableDemo({ userId }: { userId: number }) {
-  // const { toast } = useToast()
   const [data, setData] = React.useState<Payment[]>([])
   const [eliminate, setEliminate] = React.useState<SelectedEmployeeProps[]>([])
-  // const { push } = useRouter()
-  const { refetch } = useQuery<EmployeesProps>({
+
+  const { refetch, isLoading: loadingEmployee } = useQuery<EmployeesProps>({
     queryKey: ["employee", userId],
     queryFn: async (): Promise<EmployeesProps> => {
       const response = await fetch(`/api/employee/${userId}`, {
@@ -191,9 +191,9 @@ export function DataTableDemo({ userId }: { userId: number }) {
       }
       const result = await response.json()
       setData(result)
+
       return result
     },
-    refetchInterval: 1000 * 60,
 
     // Refetch every 60 seconds
     // staleTime: 1000 * 60,
@@ -254,8 +254,9 @@ export function DataTableDemo({ userId }: { userId: number }) {
     },
     onSuccess: () => refetch(),
   })
+
   return (
-    <div className=" w-full">
+    <div className=" max-w-full">
       <div className="flex items-center py-4">
         {table.getFilteredSelectedRowModel().rows.length ? (
           <>
@@ -327,7 +328,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
         </DropdownMenu>
       </div>
       <div className=" rounded-md border">
-        <Table>
+        <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -365,13 +366,6 @@ export function DataTableDemo({ userId }: { userId: number }) {
                       )}
                     </TableCell>
                   ))}
-                  {/* <SheetCalc
-                    name={row.original.name}
-                    commission={row.original.commission}
-                    id={row.original.id}
-                    pay={row.original.pay}
-                    ref={sheetRef}
-                  /> */}
                   <Modal
                     name={row.original.name}
                     commission={row.original.commission}
@@ -381,6 +375,14 @@ export function DataTableDemo({ userId }: { userId: number }) {
                   />
                 </TableRow>
               ))
+            ) : loadingEmployee ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center  ">
+                  <div className=" flex justify-center items-center">
+                    <Loader2 className="mr-2 h-8 w-8 animate-spin " />
+                  </div>
+                </TableCell>
+              </TableRow>
             ) : (
               <TableRow>
                 <TableCell
