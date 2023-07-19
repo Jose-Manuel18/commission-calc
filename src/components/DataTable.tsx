@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Plus } from "lucide-react"
+import { ChevronDown, MoreHorizontal, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -56,7 +56,7 @@ export type Payment = {
   commission: number
   pay: number
 }
-interface SelectedEmployeeProps {
+export interface SelectedEmployeeProps {
   id: string
 }
 export const columns: ColumnDef<Payment>[] = [
@@ -89,34 +89,18 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nombre
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <div className="text-left font-medium">Nombre</div>
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "commission",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Comisión
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <div className="text-left font-medium">Comisión</div>
     },
     cell: ({ row }) => (
-      <div className="lowercase pl-4">{row.getValue("commission")}%</div>
+      <div className="lowercase ">{row.getValue("commission")}%</div>
     ),
   },
   {
@@ -125,7 +109,6 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("pay"))
 
-      // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -169,13 +152,12 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
 ]
-// const fetchEmployee = async (id: number): Promise<EmployeesProps> => {
 
-// }
 export function DataTableDemo({ userId }: { userId: number }) {
   const [data, setData] = React.useState<Payment[]>([])
   const [eliminate, setEliminate] = React.useState<SelectedEmployeeProps[]>([])
-
+  const [selectedEmployee, setSelectedEmployee] =
+    React.useState<Payment | null>(null)
   const { refetch, isLoading: loadingEmployee } = useQuery<EmployeesProps>({
     queryKey: ["employee", userId],
     queryFn: async (): Promise<EmployeesProps> => {
@@ -194,9 +176,6 @@ export function DataTableDemo({ userId }: { userId: number }) {
 
       return result
     },
-
-    // Refetch every 60 seconds
-    // staleTime: 1000 * 60,
   })
   const closeButtonRef = React.useRef<HTMLButtonElement>(null)
   const sheetRef = React.useRef<HTMLButtonElement>(null)
@@ -205,7 +184,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
     [],
   )
   const closePopover = () => closeButtonRef.current?.click()
-  // const openSheet = () => sheetRef.current?.click()
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -228,10 +207,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
       rowSelection,
     },
   })
-  console.log(
-    "rows",
-    table.getFilteredSelectedRowModel().flatRows.map((row) => row.original),
-  )
+  //
   React.useEffect(() => {
     const employeeSelected = table
       .getFilteredSelectedRowModel()
@@ -252,12 +228,16 @@ export function DataTableDemo({ userId }: { userId: number }) {
         body: JSON.stringify({ ids }),
       })
     },
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch()
+      table.toggleAllRowsSelected(false)
+    },
   })
 
   return (
-    <div className=" max-w-full">
+    <div className="max-w-full">
       <div className="flex items-center py-4">
+        <Modal selectedEmployee={selectedEmployee} ref={sheetRef} />
         {table.getFilteredSelectedRowModel().rows.length ? (
           <>
             {isLoading ? (
@@ -274,7 +254,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
         ) : (
           <>
             <Input
-              placeholder="Filter emails..."
+              placeholder="Buscar empleado..."
               value={
                 (table.getColumn("name")?.getFilterValue() as string) ?? ""
               }
@@ -327,7 +307,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className=" rounded-md border">
+      <div className="rounded-md border">
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -358,7 +338,10 @@ export function DataTableDemo({ userId }: { userId: number }) {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      onClick={() => sheetRef.current?.click()}
+                      onClick={() => {
+                        sheetRef.current?.click()
+                        setSelectedEmployee(cell.row.original)
+                      }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -366,13 +349,6 @@ export function DataTableDemo({ userId }: { userId: number }) {
                       )}
                     </TableCell>
                   ))}
-                  <Modal
-                    name={row.original.name}
-                    commission={row.original.commission}
-                    id={row.original.id}
-                    pay={row.original.pay}
-                    ref={sheetRef}
-                  />
                 </TableRow>
               ))
             ) : loadingEmployee ? (

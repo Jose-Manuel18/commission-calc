@@ -86,9 +86,9 @@ import { useToast } from "@/components/ui/use-toast"
 import { useRef, useState } from "react"
 interface CommissionCalculatorProps {
   id?: string
-  commissionPercent: number
+  commissionPercent?: number
   pay?: number
-  totalAmount: number
+  totalAmount?: number
 }
 export function CommissionCalculator({
   totalAmount,
@@ -103,12 +103,15 @@ export function CommissionCalculator({
   }
 
   const calculateCommission = () => {
-    const commissionAmount = dealValue * (commissionPercent / 100)
-    setTotalCommission((prevTotal) => prevTotal + commissionAmount)
-    if (montoRef.current) {
-      montoRef.current.value = ""
+    if (commissionPercent) {
+      const commissionAmount = dealValue * (commissionPercent / 100)
+      setTotalCommission((prevTotal) => prevTotal + commissionAmount)
+      if (montoRef.current) {
+        montoRef.current.value = ""
+      }
     }
   }
+
   return (
     <Card className="w-full rounded-t-md rounded-b-none">
       <CardHeader>
@@ -133,7 +136,7 @@ export function CommissionCalculator({
               <Input
                 type="number"
                 id="comision"
-                placeholder={commissionPercent.toString() + "%"}
+                placeholder={commissionPercent?.toString() + "%"}
                 defaultValue={commissionPercent}
               />
             </div>
@@ -145,10 +148,12 @@ export function CommissionCalculator({
 
         <Button
           onClick={() => {
-            navigator.clipboard.writeText(totalAmount.toString())
-            toast({
-              description: "Monto copiado!",
-            })
+            if (totalAmount) {
+              navigator.clipboard.writeText(totalAmount.toString())
+              toast({
+                description: "Monto copiado!",
+              })
+            }
           }}
           variant={"outline"}
           className="cursor-text "
