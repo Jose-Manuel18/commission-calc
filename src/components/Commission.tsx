@@ -82,19 +82,35 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { useToast } from "@/components/ui/use-toast"
+// import { useToast } from "@/components/ui/use-toast"
+import { useMutation } from "@tanstack/react-query"
 import { useRef, useState } from "react"
 interface CommissionCalculatorProps {
   id?: string
   commissionPercent?: number
   pay?: number
-  totalAmount?: number
+  employeeId?: number
 }
 export function CommissionCalculator({
-  totalAmount,
+  employeeId,
   commissionPercent,
 }: CommissionCalculatorProps) {
-  const { toast } = useToast()
+  const {} = useMutation({
+    mutationKey: ["createPayment", employeeId],
+    mutationFn: async () => {
+      return fetch("api/payment/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          employeeId: employeeId,
+          value: 100,
+        }),
+      })
+    },
+  })
+  // const { toast } = useToast()
   const [dealValue, setDealValue] = useState<number>(0)
   const [totalCommission, setTotalCommission] = useState<number>(0)
   const montoRef = useRef<HTMLInputElement>(null)
@@ -148,12 +164,12 @@ export function CommissionCalculator({
 
         <Button
           onClick={() => {
-            if (totalAmount) {
-              navigator.clipboard.writeText(totalAmount.toString())
-              toast({
-                description: "Monto copiado!",
-              })
-            }
+            // if (totalAmount) {
+            //   navigator.clipboard.writeText(totalAmount.toString())
+            //   toast({
+            //     description: "Monto copiado!",
+            //   })
+            // }
           }}
           variant={"outline"}
           className="cursor-text "

@@ -12,7 +12,7 @@ export default async function Home() {
   const userId = 1
 
   return (
-    <div className=" p-4">
+    <div className="flex justify-center items-center p-4">
       <DataTableDemo userId={userId} />
     </div>
   )

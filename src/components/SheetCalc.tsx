@@ -26,9 +26,9 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <CommissionCalculator
               commissionPercent={selectedEmployee?.commission}
-              totalAmount={selectedEmployee?.pay}
+              employeeId={selectedEmployee?.id}
             />
-            <LastPayments />
+            <LastPayments employeeId={selectedEmployee?.id} />
           </AlertDialogHeader>
           <AlertDialogFooter className="pb-16">
             <AlertDialogCancel>Cancel</AlertDialogCancel>

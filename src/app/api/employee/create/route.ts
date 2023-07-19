@@ -28,7 +28,9 @@ export async function POST(req: Request) {
         name: body.name,
         userId: body.userId,
         commission: +body.commission,
-        pay: 0,
+        payment: {
+          create: [{ value: 0, date: new Date() }],
+        },
       },
     })
     return NextResponse.json(employee, { status: 201 })

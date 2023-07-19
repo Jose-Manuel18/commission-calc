@@ -19,7 +19,14 @@ async function main() {
             {
               name: "Juanita",
               commission: 0.1,
-              pay: 1000,
+              payment: {
+                create: [
+                  {
+                    date: new Date(),
+                    value: 1000,
+                  },
+                ],
+              },
             },
           ],
         },

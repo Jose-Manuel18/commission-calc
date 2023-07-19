@@ -18,10 +18,18 @@ model User {
 }
 
 model Employee {
-  id         Int    @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String
   commission Float?
-  pay        Float?
+  payment    Payment[]
   userId     Int?
-  User       User?  @relation(fields: [userId], references: [id])
+  User       User?     @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id         Int       @id @default(autoincrement())
+  date       DateTime
+  value      Float
+  employeeId Int?
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
 }

@@ -14,17 +14,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown, MoreHorizontal, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -39,7 +33,7 @@ import { EmployeeForm } from "./EmployeeForm"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 import { Modal } from "./SheetCalc"
-import { toast } from "./ui/use-toast"
+// import { toast } from "./ui/use-toast"
 export interface EmployeesProps {
   id: number
   name: string
@@ -48,16 +42,16 @@ export interface EmployeesProps {
   userId: number
 }
 export type Payment = {
-  id: string
+  id: number
   amount: number
   status: "pending" | "processing" | "success" | "failed"
   name: string
   userId: number
   commission: number
-  pay: number
+  payment: number[]
 }
 export interface SelectedEmployeeProps {
-  id: string
+  id: number
 }
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -80,13 +74,13 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
+  // {
+  //   accessorKey: "status",
+  //   header: "Status",
+  //   cell: ({ row }) => (
+  //     <div className="capitalize">{row.getValue("status")}</div>
+  //   ),
+  // },
   {
     accessorKey: "name",
     header: () => {
@@ -103,54 +97,54 @@ export const columns: ColumnDef<Payment>[] = [
       <div className="lowercase ">{row.getValue("commission")}%</div>
     ),
   },
-  {
-    accessorKey: "pay",
-    header: () => <div className="text-right">Monto</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("pay"))
+  // {
+  //   accessorKey: "pay",
+  //   header: () => <div className="text-right">Monto</div>,
+  //   cell: ({ row }) => {
+  //     const amount = parseFloat(row.getValue("pay"))
 
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
+  //     const formatted = new Intl.NumberFormat("en-US", {
+  //       style: "currency",
+  //       currency: "USD",
+  //     }).format(amount)
 
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
+  //     return <div className="text-right font-medium">{formatted}</div>
+  //   },
+  // },
 
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
+  // {
+  //   id: "actions",
+  //   enableHiding: false,
+  //   cell: ({ row }) => {
+  //     const payment = row.original
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {/* <DropdownMenuSeparator /> */}
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation()
-                navigator.clipboard.writeText(payment.pay.toString())
-                toast({
-                  title: "Monto copiado!",
-                  duration: 2000,
-                })
-              }}
-            >
-              Copiar monto
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
+  //     return (
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant="ghost" className="h-8 w-8 p-0">
+  //             <span className="sr-only">Open menu</span>
+  //             <MoreHorizontal className="h-4 w-4" />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align="end">
+  //           {/* <DropdownMenuSeparator /> */}
+  //           <DropdownMenuItem
+  //             onClick={(e) => {
+  //               e.stopPropagation()
+  //               navigator.clipboard.writeText(payment.pay.toString())
+  //               toast({
+  //                 title: "Monto copiado!",
+  //                 duration: 2000,
+  //               })
+  //             }}
+  //           >
+  //             Copiar monto
+  //           </DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     )
+  //   },
+  // },
 ]
 
 export function DataTableDemo({ userId }: { userId: number }) {
@@ -235,7 +229,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
   })
 
   return (
-    <div className="max-w-full">
+    <div className="w-full lg:max-w-3xl ">
       <div className="flex items-center py-4">
         <Modal selectedEmployee={selectedEmployee} ref={sheetRef} />
         {table.getFilteredSelectedRowModel().rows.length ? (
@@ -279,33 +273,6 @@ export function DataTableDemo({ userId }: { userId: number }) {
             </Popover>
           </>
         )}
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="hidden sm:flex ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
       <div className="rounded-md border">
         <Table className="relative">
@@ -353,7 +320,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
               ))
             ) : loadingEmployee ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center  ">
+                <TableCell colSpan={columns.length} className="text-center   ">
                   <div className=" flex justify-center items-center">
                     <Loader2 className="mr-2 h-8 w-8 animate-spin " />
                   </div>
