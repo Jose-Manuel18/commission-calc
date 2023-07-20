@@ -70,7 +70,7 @@
 //   )
 // }
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -78,55 +78,70 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // import { useToast } from "@/components/ui/use-toast"
-import { useMutation } from "@tanstack/react-query"
-import { useRef, useState } from "react"
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 interface CommissionCalculatorProps {
-  id?: string
-  commissionPercent?: number
-  pay?: number
-  employeeId?: number
+  id?: string;
+  commissionPercent?: number;
+  pay?: number;
+  employeeId?: number;
+  totalAmount?: {
+    value: number;
+  };
+
+  refetch: () => void;
 }
 export function CommissionCalculator({
   employeeId,
   commissionPercent,
+  refetch,
 }: CommissionCalculatorProps) {
-  const {} = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationKey: ["createPayment", employeeId],
-    mutationFn: async () => {
-      return fetch("api/payment/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          employeeId: employeeId,
-          value: 100,
-        }),
-      })
+    mutationFn: async (totalCommission: number) => {
+      try {
+        if (totalCommission) {
+          return fetch("api/payment/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              employeeId: employeeId,
+              value: totalCommission,
+            }),
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
-  })
-  // const { toast } = useToast()
-  const [dealValue, setDealValue] = useState<number>(0)
-  const [totalCommission, setTotalCommission] = useState<number>(0)
-  const montoRef = useRef<HTMLInputElement>(null)
+    onSuccess: () => refetch(),
+  });
+
+  const [dealValue, setDealValue] = useState<number>(0);
+  const [totalCommission, setTotalCommission] = useState<number>(0);
+  const montoRef = useRef<HTMLInputElement>(null);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDealValue(Number(e.target.value))
-  }
+    setDealValue(Number(e.target.value));
+  };
 
   const calculateCommission = () => {
     if (commissionPercent) {
-      const commissionAmount = dealValue * (commissionPercent / 100)
-      setTotalCommission((prevTotal) => prevTotal + commissionAmount)
+      const commissionAmount = dealValue * (commissionPercent / 100);
+      setTotalCommission((prevTotal) => prevTotal + commissionAmount);
       if (montoRef.current) {
-        montoRef.current.value = ""
+        montoRef.current.value = "";
       }
     }
-  }
+  };
+  console.log(totalCommission);
 
   return (
     <Card className="w-full rounded-t-md rounded-b-none">
@@ -160,24 +175,30 @@ export function CommissionCalculator({
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button onClick={calculateCommission}> Sumar</Button>
+        {isLoading ? (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Guardando
+          </Button>
+        ) : (
+          <Button onClick={() => mutate(totalCommission)}>Guardar</Button>
+        )}
+        <div>
+          <Button
+            onClick={calculateCommission}
+            variant={"secondary"}
+            className="mr-2"
+          >
+            {" "}
+            Sumar
+          </Button>
 
-        <Button
-          onClick={() => {
-            // if (totalAmount) {
-            //   navigator.clipboard.writeText(totalAmount.toString())
-            //   toast({
-            //     description: "Monto copiado!",
-            //   })
-            // }
-          }}
-          variant={"outline"}
-          className="cursor-text "
-        >
-          {" "}
-          ${totalCommission.toFixed(2)}
-        </Button>
+          <Button variant={"outline"} className="cursor-pointer ">
+            {" "}
+            ${totalCommission.toFixed(2)}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

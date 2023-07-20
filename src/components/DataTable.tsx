@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Loader2 } from "lucide-react"
+import * as React from "react";
+import { Loader2 } from "lucide-react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,13 +13,13 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { Plus } from "lucide-react"
+} from "@tanstack/react-table";
+import { Plus } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -27,31 +27,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-import { EmployeeForm } from "./EmployeeForm"
-import { useMutation, useQuery } from "@tanstack/react-query"
+} from "@/components/ui/table";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { EmployeeForm } from "./EmployeeForm";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { Modal } from "./SheetCalc"
+import { Modal } from "./SheetCalc";
 // import { toast } from "./ui/use-toast"
 export interface EmployeesProps {
-  id: number
-  name: string
-  commission: number
-  pay: number
-  userId: number
+  id: number;
+  name: string;
+  commission: number;
+  payment: number[];
+  userId: number;
 }
 export type Payment = {
-  id: number
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  name: string
-  userId: number
-  commission: number
-  payment: number[]
-}
+  id: number;
+  amount: number;
+  status: "pending" | "processing" | "success" | "failed";
+  name: string;
+  userId: number;
+  commission: number;
+  payment: {
+    value: number;
+  };
+};
 export interface SelectedEmployeeProps {
-  id: number
+  id: number;
 }
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -84,14 +86,14 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "name",
     header: () => {
-      return <div className="text-left font-medium">Nombre</div>
+      return <div className="text-left font-medium">Nombre</div>;
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "commission",
     header: () => {
-      return <div className="text-left font-medium">Comisión</div>
+      return <div className="text-left font-medium">Comisión</div>;
     },
     cell: ({ row }) => (
       <div className="lowercase ">{row.getValue("commission")}%</div>
@@ -145,43 +147,42 @@ export const columns: ColumnDef<Payment>[] = [
   //     )
   //   },
   // },
-]
+];
 
 export function DataTableDemo({ userId }: { userId: number }) {
-  const [data, setData] = React.useState<Payment[]>([])
-  const [eliminate, setEliminate] = React.useState<SelectedEmployeeProps[]>([])
+  const [data, setData] = React.useState<Payment[]>([]);
+  const [eliminate, setEliminate] = React.useState<SelectedEmployeeProps[]>([]);
   const [selectedEmployee, setSelectedEmployee] =
-    React.useState<Payment | null>(null)
-  const { refetch, isLoading: loadingEmployee } = useQuery<EmployeesProps>({
+    React.useState<Payment | null>(null);
+  const { refetch, isLoading: loadingEmployee } = useQuery({
     queryKey: ["employee", userId],
     queryFn: async (): Promise<EmployeesProps> => {
       const response = await fetch(`/api/employee/${userId}`, {
-        next: { revalidate: 60 },
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-      })
+      });
       if (!response.ok) {
-        throw new Error("Network response was not ok")
+        throw new Error("Network response was not ok");
       }
-      const result = await response.json()
-      setData(result)
+      const result = await response.json();
+      setData(result);
 
-      return result
+      return result;
     },
-  })
-  const closeButtonRef = React.useRef<HTMLButtonElement>(null)
-  const sheetRef = React.useRef<HTMLButtonElement>(null)
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  });
+  const closeButtonRef = React.useRef<HTMLButtonElement>(null);
+  const sheetRef = React.useRef<HTMLButtonElement>(null);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
-  )
-  const closePopover = () => closeButtonRef.current?.click()
+  );
+  const closePopover = () => closeButtonRef.current?.click();
 
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -200,7 +201,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
   //
   React.useEffect(() => {
     const employeeSelected = table
@@ -208,10 +209,10 @@ export function DataTableDemo({ userId }: { userId: number }) {
       .flatRows.map((row) => {
         return {
           id: row.original.id,
-        }
-      })
-    setEliminate(employeeSelected)
-  }, [rowSelection])
+        };
+      });
+    setEliminate(employeeSelected);
+  }, [rowSelection]);
   const { mutate, isLoading } = useMutation({
     mutationFn: async (ids: SelectedEmployeeProps[]) => {
       await fetch(`/api/delete`, {
@@ -220,13 +221,14 @@ export function DataTableDemo({ userId }: { userId: number }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ ids }),
-      })
+      });
     },
     onSuccess: () => {
-      refetch()
-      table.toggleAllRowsSelected(false)
+      refetch();
+      table.toggleAllRowsSelected(false);
     },
-  })
+  });
+  // console.log(testing);
 
   return (
     <div className="w-full lg:max-w-3xl ">
@@ -289,7 +291,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
                             header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -306,8 +308,8 @@ export function DataTableDemo({ userId }: { userId: number }) {
                     <TableCell
                       key={cell.id}
                       onClick={() => {
-                        sheetRef.current?.click()
-                        setSelectedEmployee(cell.row.original)
+                        sheetRef.current?.click();
+                        setSelectedEmployee(cell.row.original);
                       }}
                     >
                       {flexRender(
@@ -364,5 +366,5 @@ export function DataTableDemo({ userId }: { userId: number }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

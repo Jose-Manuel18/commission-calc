@@ -1,25 +1,25 @@
-import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 interface BodyRequest {
-  name: string
-  userId: number
-  commission: string
+  name: string;
+  userId: number;
+  commission: string;
 }
 
 export async function POST(req: Request) {
-  let body: BodyRequest
+  let body: BodyRequest;
   try {
-    body = await req.json()
+    body = await req.json();
     if (
       (typeof body.name !== "string" && typeof body.commission !== "string") ||
       (body.userId && typeof body.userId !== "number")
     ) {
-      throw new Error("Invalid input")
+      throw new Error("Invalid input");
     }
   } catch (error) {
     // If we can't parse the request body, return a 400 response.
-    return NextResponse.json({ error: "Invalid input" }, { status: 400 })
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 
   try {
@@ -28,15 +28,15 @@ export async function POST(req: Request) {
         name: body.name,
         userId: body.userId,
         commission: +body.commission,
-        payment: {
-          create: [{ value: 0, date: new Date() }],
-        },
       },
-    })
-    return NextResponse.json(employee, { status: 201 })
+    });
+    return NextResponse.json(employee, { status: 201 });
   } catch (error) {
     // If the database operation fails, log the error and return a 500 response.
-    console.error(error)
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
+    console.error(error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 },
+    );
   }
 }

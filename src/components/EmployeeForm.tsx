@@ -1,7 +1,7 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { useForm } from "react-hook-form"
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -10,11 +10,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-import { useMutation } from "@tanstack/react-query"
-import { Loader2 } from "lucide-react"
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   nombre: z.string().min(2, {
@@ -26,11 +26,11 @@ const formSchema = z.object({
       message: "Commission must be at least 0.",
     })
     .max(2),
-})
+});
 interface EmployeeFormProps {
-  closePopover: () => void
-  refetch: () => void
-  userId: number
+  closePopover: () => void;
+  refetch: () => void;
+  userId: number;
 }
 export function EmployeeForm({
   closePopover,
@@ -43,7 +43,7 @@ export function EmployeeForm({
       nombre: "",
       comision: "",
     },
-  })
+  });
 
   const { mutate, isLoading } = useMutation({
     mutationKey: ["createEmployee"],
@@ -58,17 +58,17 @@ export function EmployeeForm({
           commission: values.comision,
           userId: userId,
         }),
-      })
+      });
     },
     onSuccess: () => {
-      refetch()
-      closePopover()
+      refetch();
+      closePopover();
     },
-  })
+  });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutate(values)
-  }
+    mutate(values);
+  };
 
   return (
     <Form {...form}>
@@ -86,7 +86,7 @@ export function EmployeeForm({
                 <FormDescription>Nombre del empleado.</FormDescription>
                 <FormMessage />
               </FormItem>
-            )
+            );
           }}
         />
         <FormField
@@ -104,7 +104,7 @@ export function EmployeeForm({
                 </FormDescription>
                 <FormMessage />
               </FormItem>
-            )
+            );
           }}
         />
         {isLoading ? (
@@ -113,9 +113,9 @@ export function EmployeeForm({
             Añadiendo
           </Button>
         ) : (
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Añadir</Button>
         )}
       </form>
     </Form>
-  )
+  );
 }

@@ -22,7 +22,7 @@ CREATE TABLE "Employee" (
 CREATE TABLE "Payment" (
     "id" SERIAL NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
-    "value" DOUBLE PRECISION NOT NULL,
+    "value" DOUBLE PRECISION,
     "employeeId" INTEGER,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")

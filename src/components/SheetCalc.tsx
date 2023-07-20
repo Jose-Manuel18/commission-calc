@@ -7,17 +7,41 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { CommissionCalculator } from "./Commission"
-import { LastPayments } from "./LastPayments"
-import { forwardRef } from "react"
-import { Payment } from "./DataTable"
+} from "@/components/ui/alert-dialog";
+import { CommissionCalculator } from "./Commission";
+import { LastPayments } from "./LastPayments";
+import { forwardRef } from "react";
+import { Payment } from "./DataTable";
+import { useQuery } from "@tanstack/react-query";
 interface SelectedEmployee {
-  selectedEmployee: Payment | null
+  selectedEmployee: Payment | null;
 }
-
+interface EmployeePayments {
+  id: number;
+  date: Date;
+  value: number;
+  employeeId: number;
+}
 export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
   ({ selectedEmployee }, ref) => {
+    const {
+      data: employeePayments,
+      isLoading,
+      refetch,
+    } = useQuery({
+      queryKey: ["getPayment", selectedEmployee?.id],
+      queryFn: async (): Promise<EmployeePayments[]> => {
+        const response = await fetch(`api/payment/${selectedEmployee?.id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        return response.json();
+      },
+      enabled: !!selectedEmployee?.id,
+    });
+
     return (
       <AlertDialog>
         <AlertDialogTrigger ref={ref}></AlertDialogTrigger>
@@ -27,8 +51,13 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
             <CommissionCalculator
               commissionPercent={selectedEmployee?.commission}
               employeeId={selectedEmployee?.id}
+              totalAmount={selectedEmployee?.payment}
+              refetch={refetch}
             />
-            <LastPayments employeeId={selectedEmployee?.id} />
+            <LastPayments
+              isLoading={isLoading}
+              employeePayments={employeePayments}
+            />
           </AlertDialogHeader>
           <AlertDialogFooter className="pb-16">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -36,6 +65,6 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    )
+    );
   },
-)
+);
