@@ -1,11 +1,9 @@
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { CommissionCalculator } from "./Commission";
@@ -47,7 +45,6 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
         <AlertDialogTrigger ref={ref}></AlertDialogTrigger>
         <AlertDialogContent className="overflow-y-scroll h-screen">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <CommissionCalculator
               commissionPercent={selectedEmployee?.commission}
               employeeId={selectedEmployee?.id}
@@ -60,8 +57,7 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
             />
           </AlertDialogHeader>
           <AlertDialogFooter className="pb-16">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Continue</AlertDialogAction>
+            <AlertDialogAction>Cerrar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

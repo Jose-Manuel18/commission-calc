@@ -334,7 +334,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No hay empleados.
                 </TableCell>
               </TableRow>
             )}

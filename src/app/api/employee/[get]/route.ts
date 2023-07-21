@@ -14,6 +14,7 @@ export async function GET(_: Request, { params }: { params: { get: string } }) {
         commission: true,
         payment: {
           select: { value: true },
+          orderBy: { value: "desc" },
         },
       },
     });
