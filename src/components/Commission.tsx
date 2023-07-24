@@ -30,7 +30,6 @@ export function CommissionCalculator({
   refetch,
 }: CommissionCalculatorProps) {
   const [totalCommission, setTotalCommission] = useState<number>(0);
-  const [sortedData, setSortedData] = useState<any[]>([]);
   const { mutate, isLoading } = useMutation({
     mutationKey: ["createPayment", employeeId],
     mutationFn: async (totalCommission: number) => {
