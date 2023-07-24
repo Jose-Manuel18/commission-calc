@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
+import _ from "lodash";
 interface CommissionCalculatorProps {
   id?: string;
   commissionPercent?: number;
@@ -28,6 +29,8 @@ export function CommissionCalculator({
   commissionPercent,
   refetch,
 }: CommissionCalculatorProps) {
+  const [totalCommission, setTotalCommission] = useState<number>(0);
+  const [sortedData, setSortedData] = useState<any[]>([]);
   const { mutate, isLoading } = useMutation({
     mutationKey: ["createPayment", employeeId],
     mutationFn: async (totalCommission: number) => {
@@ -48,11 +51,14 @@ export function CommissionCalculator({
         console.log(error);
       }
     },
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch();
+      setTotalCommission(0);
+    },
   });
 
   const [dealValue, setDealValue] = useState<number>(0);
-  const [totalCommission, setTotalCommission] = useState<number>(0);
+
   const montoRef = useRef<HTMLInputElement>(null);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDealValue(Number(e.target.value));
@@ -67,13 +73,13 @@ export function CommissionCalculator({
       }
     }
   };
+
   console.log(totalCommission);
 
   return (
     <Card className="w-full rounded-t-md rounded-b-none">
       <CardHeader>
         <CardTitle>Calculadora de Comisión</CardTitle>
-        {/* <CardDescription></CardDescription> */}
       </CardHeader>
       <CardContent>
         <form>

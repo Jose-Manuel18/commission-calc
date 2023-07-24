@@ -11,6 +11,8 @@ import { LastPayments } from "./LastPayments";
 import { forwardRef } from "react";
 import { Payment } from "./DataTable";
 import { useQuery } from "@tanstack/react-query";
+
+import _ from "lodash";
 interface SelectedEmployee {
   selectedEmployee: Payment | null;
 }
@@ -35,7 +37,9 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
             "Content-Type": "application/json",
           },
         });
-        return response.json();
+        const json = await response.json();
+        const sortedData = _.orderBy(json, ["date"], ["desc"]);
+        return _.take(sortedData, 5);
       },
       enabled: !!selectedEmployee?.id,
     });

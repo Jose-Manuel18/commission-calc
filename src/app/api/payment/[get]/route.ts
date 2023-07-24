@@ -9,10 +9,6 @@ export async function GET(_: Request, { params }: { params: { get: string } }) {
       where: {
         employeeId: +employeeId,
       },
-      take: 5,
-      orderBy: {
-        value: "desc",
-      },
     });
     return NextResponse.json(payments, { status: 200 });
   } catch (error) {
