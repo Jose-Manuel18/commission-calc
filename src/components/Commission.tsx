@@ -13,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import _ from "lodash";
+import { apiUrls } from "@/utils/apiUrls";
 interface CommissionCalculatorProps {
   id?: string;
   commissionPercent?: number;
@@ -35,7 +36,7 @@ export function CommissionCalculator({
     mutationFn: async (totalCommission: number) => {
       try {
         if (totalCommission) {
-          return fetch("api/payment/create", {
+          return fetch(apiUrls.payment.createPayment, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

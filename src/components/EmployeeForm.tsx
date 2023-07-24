@@ -15,6 +15,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { apiUrls } from "@/utils/apiUrls";
 
 const formSchema = z.object({
   nombre: z.string().min(2, {
@@ -48,7 +49,7 @@ export function EmployeeForm({
   const { mutate, isLoading } = useMutation({
     mutationKey: ["createEmployee"],
     mutationFn: (values: z.infer<typeof formSchema>) => {
-      return fetch("api/employee/create", {
+      return fetch(apiUrls.employee.createEmployee, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

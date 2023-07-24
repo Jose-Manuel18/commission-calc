@@ -13,6 +13,7 @@ import { Payment } from "./DataTable";
 import { useQuery } from "@tanstack/react-query";
 
 import _ from "lodash";
+import { apiUrls } from "@/utils/apiUrls";
 interface SelectedEmployee {
   selectedEmployee: Payment | null;
 }
@@ -31,15 +32,23 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
     } = useQuery({
       queryKey: ["getPayment", selectedEmployee?.id],
       queryFn: async (): Promise<EmployeePayments[]> => {
-        const response = await fetch(`api/payment/${selectedEmployee?.id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const json = await response.json();
-        const sortedData = _.orderBy(json, ["date"], ["desc"]);
-        return _.take(sortedData, 5);
+        if (!selectedEmployee?.id) return Promise.resolve([]);
+        try {
+          const response = await fetch(
+            apiUrls.payment.getPayment(selectedEmployee.id),
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          const json = await response.json();
+          const sortedData = _.orderBy(json, ["date"], ["desc"]);
+          return _.take(sortedData, 5);
+        } catch (error) {
+          throw new Error();
+        }
       },
       enabled: !!selectedEmployee?.id,
     });

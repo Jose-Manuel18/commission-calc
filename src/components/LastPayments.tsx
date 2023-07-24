@@ -30,7 +30,6 @@ export function LastPayments({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">ID</TableHead>
               <TableHead>Monto</TableHead>
               <TableHead>Fecha</TableHead>
             </TableRow>
@@ -40,10 +39,8 @@ export function LastPayments({
               let date = new Date(payment.date);
               return (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{payment.id}</TableCell>
-
                   <TableCell className="">${payment.value}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">
                     {date.toLocaleString("en-US", {
                       year: "numeric",
                       month: "long",

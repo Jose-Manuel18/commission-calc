@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import { Loader2 } from "lucide-react";
 import {
@@ -15,10 +14,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -31,10 +28,9 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { EmployeeForm } from "./EmployeeForm";
 import { useMutation, useQuery } from "@tanstack/react-query";
-
 import { Modal } from "./SheetCalc";
+import { apiUrls } from "@/utils/apiUrls";
 
-// import { toast } from "./ui/use-toast"
 export interface EmployeesProps {
   id: number;
   name: string;
@@ -77,13 +73,7 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "status",
-  //   header: "Status",
-  //   cell: ({ row }) => (
-  //     <div className="capitalize">{row.getValue("status")}</div>
-  //   ),
-  // },
+
   {
     accessorKey: "name",
     header: () => {
@@ -100,54 +90,6 @@ export const columns: ColumnDef<Payment>[] = [
       <div className="lowercase ">{row.getValue("commission")}%</div>
     ),
   },
-  // {
-  //   accessorKey: "pay",
-  //   header: () => <div className="text-right">Monto</div>,
-  //   cell: ({ row }) => {
-  //     const amount = parseFloat(row.getValue("pay"))
-
-  //     const formatted = new Intl.NumberFormat("en-US", {
-  //       style: "currency",
-  //       currency: "USD",
-  //     }).format(amount)
-
-  //     return <div className="text-right font-medium">{formatted}</div>
-  //   },
-  // },
-
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   cell: ({ row }) => {
-  //     const payment = row.original
-
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <MoreHorizontal className="h-4 w-4" />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           {/* <DropdownMenuSeparator /> */}
-  //           <DropdownMenuItem
-  //             onClick={(e) => {
-  //               e.stopPropagation()
-  //               navigator.clipboard.writeText(payment.pay.toString())
-  //               toast({
-  //                 title: "Monto copiado!",
-  //                 duration: 2000,
-  //               })
-  //             }}
-  //           >
-  //             Copiar monto
-  //           </DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     )
-  //   },
-  // },
 ];
 
 export function DataTableDemo({ userId }: { userId: number }) {
@@ -216,7 +158,7 @@ export function DataTableDemo({ userId }: { userId: number }) {
   }, [rowSelection]);
   const { mutate, isLoading } = useMutation({
     mutationFn: async (ids: SelectedEmployeeProps[]) => {
-      await fetch(`/api/delete`, {
+      await fetch(apiUrls.employee.deleteEmployee, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
