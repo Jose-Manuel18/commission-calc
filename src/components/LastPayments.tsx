@@ -24,7 +24,7 @@ export function LastPayments({
   isLoading,
 }: LastPaymentsProps) {
   return (
-    <div className="border rounded-b-md">
+    <div className="rounded-b-md border">
       {employeePayments?.length ? (
         <Table>
           <TableHeader>
@@ -58,8 +58,8 @@ export function LastPayments({
           </TableBody>
         </Table>
       ) : isLoading ? (
-        <div className="justify-center flex ">
-          <Loader2 className="animate-spin my-2 h-8 w-8  text-gray-600" />
+        <div className="flex justify-center ">
+          <Loader2 className="my-2 h-8 w-8 animate-spin  text-gray-600" />
         </div>
       ) : (
         <Table>

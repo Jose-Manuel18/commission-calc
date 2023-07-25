@@ -56,7 +56,7 @@ export const Modal = forwardRef<HTMLButtonElement, SelectedEmployee>(
     return (
       <AlertDialog>
         <AlertDialogTrigger ref={ref}></AlertDialogTrigger>
-        <AlertDialogContent className="overflow-y-scroll h-screen">
+        <AlertDialogContent className="flex h-full flex-col overflow-auto">
           <AlertDialogHeader>
             <CommissionCalculator
               commissionPercent={selectedEmployee?.commission}
