@@ -70,6 +70,7 @@ export function CommissionCalculator({
       setTotalCommission((prevTotal) => prevTotal + commissionAmount);
       if (montoRef.current) {
         montoRef.current.value = "";
+        montoRef.current.focus();
       }
     }
   };
@@ -77,14 +78,14 @@ export function CommissionCalculator({
   console.log(totalCommission);
 
   return (
-    <Card className="w-full rounded-t-md rounded-b-none">
+    <Card className="w-full rounded-b-none rounded-t-md">
       <CardHeader>
         <CardTitle>Calculadora de Comisión</CardTitle>
       </CardHeader>
       <CardContent>
         <form>
           <div className="grid w-full items-center gap-4">
-            <div className="flex text-left flex-col space-y-1.5">
+            <div className="flex flex-col space-y-1.5 text-left">
               <Label htmlFor="monto">Monto</Label>
               <Input
                 ref={montoRef}
@@ -94,7 +95,7 @@ export function CommissionCalculator({
                 onChange={handleInputChange}
               />
             </div>
-            <div className="flex text-left flex-col space-y-1.5">
+            <div className="flex flex-col space-y-1.5 text-left">
               <Label htmlFor="comision">Comisión</Label>
               <Input
                 type="number"
