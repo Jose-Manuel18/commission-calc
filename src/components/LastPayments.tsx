@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import _ from "lodash";
 
 import { Loader2 } from "lucide-react";
 
@@ -39,7 +38,9 @@ export function LastPayments({
               let date = new Date(payment.date);
               return (
                 <TableRow key={index}>
-                  <TableCell className="">${payment.value}</TableCell>
+                  <TableCell className="">
+                    ${payment.value.toFixed(2)}
+                  </TableCell>
                   <TableCell className="text-left">
                     {date.toLocaleString("en-US", {
                       year: "numeric",
@@ -57,13 +58,13 @@ export function LastPayments({
           </TableBody>
         </Table>
       ) : isLoading ? (
-        <div className=" flex justify-center">
-          <Loader2 className="my-2 h-8 w-8 animate-spin text-gray-600" />
+        <div className="justify-center flex ">
+          <Loader2 className="animate-spin my-2 h-8 w-8  text-gray-600" />
         </div>
       ) : (
         <Table>
           <TableRow className="text-center ">
-            <TableCell className="font-medium">No payments yet</TableCell>
+            <TableCell className="font-medium">No hay pagos</TableCell>
           </TableRow>
         </Table>
       )}
