@@ -1,8 +1,19 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Commission Calculator
 
-## Getting Started
+## Description
+The Commission Calculator is a Progressive Web Application (PWA) built with Next.js, a robust framework for building server-side rendered React applications, and Tailwind CSS, a utility-first CSS framework. This application is designed to calculate the commissions of employees based on their sales records, providing a streamlined and effective way to manage financial records.
 
-First, run the development server:
+The application leverages the power of the Shadcn component library to provide a clean, modern user interface, and is fully responsive, ensuring a seamless experience on any device.
+
+## Features
+
+- **Employee Management**: Add and manage employees within the application.
+- **Commission Calculation**: Dynamically calculate commissions based on each employee's sales.
+- **Payment History**: Easily review the last five payment records for each employee, sorted by date.
+
+## Installation
+
+Before installing the project, make sure you have Node.js and npm installed in your system. First run `npm install` then:
 
 ```bash
 npm run dev
@@ -13,10 +24,6 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Learn More
 
