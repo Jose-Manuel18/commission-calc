@@ -41,6 +41,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 ## 🍿 Showcase
-| Deskop  | Mobile |
+| Commission  | Calculator |
 |---           |---            |
 |<img width="282" alt="Screenshot 2023-08-04 at 4 20 06 PM" src="https://github.com/Jose-Manuel18/movie-web-app/assets/103284630/bdb4b7b1-6900-4814-8ca2-021b6b9a7e7a">|<img width="281" alt="Screenshot 2023-08-04 at 4 20 27 PM" src="https://github.com/Jose-Manuel18/movie-web-app/assets/103284630/ed349edf-70f8-4ed6-9e08-e20ed520c383">
