@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/table";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiUrls } from "@/utils/apiUrls";
-import { Metadata } from "next";
+
 import {
   Popover,
   PopoverContent,
@@ -36,10 +36,6 @@ import {
 import { EmployeeForm } from "@/components/EmployeeForm";
 import { Modal } from "@/components/SheetCalc";
 
-const metadata: Metadata = {
-  title: "Commission",
-  description: "Commission calculator",
-};
 export interface EmployeesProps {
   id: number;
   name: string;
@@ -61,7 +57,7 @@ export type Payment = {
 export interface SelectedEmployeeProps {
   id: number;
 }
-export const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<Payment>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -100,7 +96,7 @@ export const columns: ColumnDef<Payment>[] = [
     ),
   },
 ];
-export default function Home() {
+export default function Page() {
   const userId = 1;
   const [data, setData] = React.useState<Payment[]>([]);
   const [eliminate, setEliminate] = React.useState<SelectedEmployeeProps[]>([]);
