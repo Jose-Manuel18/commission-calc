@@ -43,4 +43,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## 🍿 Showcase
 | Commission  | Calculator |
 |---           |---            |
-|<img width="282" alt="Screenshot 2023-08-04 at 4 20 06 PM" src="https://github.com/Jose-Manuel18/movie-web-app/assets/103284630/bdb4b7b1-6900-4814-8ca2-021b6b9a7e7a">|<img width="281" alt="Screenshot 2023-08-04 at 4 20 27 PM" src="https://github.com/Jose-Manuel18/movie-web-app/assets/103284630/ed349edf-70f8-4ed6-9e08-e20ed520c383">
+|<img width="294" alt="Screenshot 2023-08-13 at 9 53 14 AM" align="center" src="https://github.com/Jose-Manuel18/commission-calc/assets/103284630/f6cb3e07-6487-4577-a4b9-5f2973fc30b3">|<img align="center" width="281" alt="Screenshot 2023-08-04 at 4 20 27 PM" src="https://github.com/Jose-Manuel18/movie-web-app/assets/103284630/ed349edf-70f8-4ed6-9e08-e20ed520c383">
