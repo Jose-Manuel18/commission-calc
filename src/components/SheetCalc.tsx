@@ -14,7 +14,6 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { CommissionCalculator } from "./Commission";
 import { LastPayments } from "./LastPayments";
 import { forwardRef } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -44,6 +43,7 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
         const commissionAmount =
           dealValue * (selectedEmployee?.commission / 100);
         setTotalCommission((prevTotal) => prevTotal + commissionAmount);
+        setDealValue(0);
         if (montoRef.current) {
           montoRef.current.value = "";
           montoRef.current.focus();
@@ -100,6 +100,7 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
       },
       onSuccess: () => {
         refetch();
+        setDealValue(0);
         setTotalCommission(0);
       },
     });
@@ -112,19 +113,11 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
       selectedEmployee?.total ?? 0,
     );
 
-    console.log(employeePayments);
-
     return (
       <AlertDialog>
         <AlertDialogTrigger ref={ref}></AlertDialogTrigger>
         <AlertDialogContent className="flex h-full flex-col overflow-auto">
           <AlertDialogHeader>
-            {/* <CommissionCalculator
-              commissionPercent={selectedEmployee?.commission}
-              employeeId={selectedEmployee?.id}
-              totalAmount={selectedEmployee?.payment}
-              refetch={refetch}
-            /> */}
             <Card className="w-full rounded-b-none rounded-t-md">
               <CardHeader>
                 <CardTitle>Calculadora de Comisión</CardTitle>
@@ -190,7 +183,7 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
               refetch={refetch}
             />
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-row pb-16 lg:block">
+          <AlertDialogFooter className=" flex flex-row  pb-16 lg:block ">
             <AlertDialogAction className="w-full select-none lg:w-auto">
               Cerrar
             </AlertDialogAction>

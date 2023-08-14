@@ -178,7 +178,6 @@ export default function Page() {
       table.toggleAllRowsSelected(false);
     },
   });
-  console.log(data);
 
   return (
     <div className="flex items-center justify-center p-4">

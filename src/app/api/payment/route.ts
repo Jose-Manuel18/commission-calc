@@ -22,15 +22,18 @@ export async function POST(req: Request) {
 }
 interface DELETEBodyRequest {
   employeeId: number;
-  id: number;
+  ids: number[];
 }
 export async function DELETE(req: Request) {
   const body: DELETEBodyRequest = await req.json();
+
   try {
-    const deletePayment = await prisma.payment.delete({
+    const deletePayment = await prisma.payment.deleteMany({
       where: {
         employeeId: body.employeeId,
-        id: body.id,
+        id: {
+          in: body.ids,
+        },
       },
     });
     return NextResponse.json(deletePayment, { status: 201 });

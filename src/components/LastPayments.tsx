@@ -12,8 +12,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
@@ -39,18 +37,18 @@ export function LastPayments({
   const { mutate, isLoading: isMutating } = useMutation({
     mutationKey: ["deletePayment"],
     mutationFn: async ({
-      id,
       employeeId,
+      ids,
     }: {
-      id: number;
       employeeId: number;
+      ids?: number[];
     }) => {
       await fetch(apiUrls.payment.deletePayment, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id, employeeId }),
+        body: JSON.stringify({ ids, employeeId }),
       });
     },
 
@@ -65,6 +63,28 @@ export function LastPayments({
             <TableRow>
               <TableHead>Monto</TableHead>
               <TableHead>Fecha</TableHead>
+              <TableHead>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Open menu</span>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() =>
+                        mutate({
+                          ids: employeePayments.map((payment) => payment.id),
+                          employeeId: employeePayments[0].employeeId,
+                        })
+                      }
+                    >
+                      Eliminar todos
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -95,15 +115,13 @@ export function LastPayments({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Editar</DropdownMenuItem>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={() =>
+                          onClick={() => {
                             mutate({
-                              id: payment.id,
+                              ids: [payment.id],
                               employeeId: payment.employeeId,
-                            })
-                          }
+                            });
+                          }}
                         >
                           Eliminar
                         </DropdownMenuItem>
