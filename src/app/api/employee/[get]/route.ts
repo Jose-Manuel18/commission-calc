@@ -12,6 +12,7 @@ export async function GET(_: Request, { params }: { params: { get: string } }) {
         id: true,
         name: true,
         commission: true,
+        total: true,
         payment: {
           select: { value: true },
           orderBy: { value: "desc" },

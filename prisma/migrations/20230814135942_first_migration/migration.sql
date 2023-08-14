@@ -13,6 +13,7 @@ CREATE TABLE "Employee" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "commission" DOUBLE PRECISION,
+    "total" DOUBLE PRECISION DEFAULT 0,
     "userId" INTEGER,
 
     CONSTRAINT "Employee_pkey" PRIMARY KEY ("id")

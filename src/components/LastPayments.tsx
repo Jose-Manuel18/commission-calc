@@ -7,7 +7,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { apiUrls } from "@/utils/apiUrls";
 
 interface EmployeePayments {
   id: number;
@@ -18,11 +29,34 @@ interface EmployeePayments {
 interface LastPaymentsProps {
   employeePayments?: EmployeePayments[];
   isLoading: boolean;
+  refetch: () => void;
 }
 export function LastPayments({
   employeePayments,
   isLoading,
+  refetch,
 }: LastPaymentsProps) {
+  const { mutate, isLoading: isMutating } = useMutation({
+    mutationKey: ["deletePayment"],
+    mutationFn: async ({
+      id,
+      employeeId,
+    }: {
+      id: number;
+      employeeId: number;
+    }) => {
+      await fetch(apiUrls.payment.deletePayment, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, employeeId }),
+      });
+    },
+
+    onSuccess: refetch,
+  });
+
   return (
     <div className="rounded-b-md border">
       {employeePayments?.length ? (
@@ -39,7 +73,7 @@ export function LastPayments({
               return (
                 <TableRow key={index}>
                   <TableCell className="">
-                    ${payment.value.toFixed(2)}
+                    ${payment.value.toLocaleString()}
                   </TableCell>
                   <TableCell className="text-left">
                     {date.toLocaleString("en-US", {
@@ -51,6 +85,30 @@ export function LastPayments({
                       second: "2-digit",
                       hour12: true,
                     })}
+                  </TableCell>
+                  <TableCell className="text-left">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>Editar</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() =>
+                            mutate({
+                              id: payment.id,
+                              employeeId: payment.employeeId,
+                            })
+                          }
+                        >
+                          Eliminar
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               );

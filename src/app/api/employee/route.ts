@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-interface BodyRequest {
+interface PostBodyRequest {
   name: string;
   userId: number;
   commission: string;
 }
 
 export async function POST(req: Request) {
-  let body: BodyRequest;
+  let body: PostBodyRequest;
   try {
     body = await req.json();
     if (
@@ -38,5 +38,30 @@ export async function POST(req: Request) {
       { error: "Something went wrong" },
       { status: 500 },
     );
+  }
+}
+
+interface DeleteBodyRequest {
+  ids: {
+    id: string;
+  }[];
+}
+
+export async function DELETE(req: Request) {
+  const body: DeleteBodyRequest = await req.json();
+
+  const ids = body.ids.map((id) => id.id);
+
+  try {
+    const deleteEmployee = await prisma.employee.deleteMany({
+      where: {
+        id: {
+          in: ids.map(Number),
+        },
+      },
+    });
+    return NextResponse.json(deleteEmployee, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(error, { status: 500 });
   }
 }

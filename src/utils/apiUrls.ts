@@ -5,12 +5,13 @@ export const apiUrls = {
   },
   employee: {
     getEmployee: (id: number) => `/api/employee/${id}`,
-    createEmployee: "/api/employee/create",
+    createEmployee: "/api/employee",
     // updateEmployee: "/api/employee",
-    deleteEmployee: "/api/delete",
+    deleteEmployee: "/api/employee",
   },
   payment: {
     getPayment: (id: number) => `/api/payment/${id}`,
-    createPayment: "/api/payment/create",
+    createPayment: "/api/payment",
+    deletePayment: "/api/payment",
   },
 } as const;

@@ -34,7 +34,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { EmployeeForm } from "@/components/EmployeeForm";
-import { Modal } from "@/components/SheetCalc";
+import { SheetCalc } from "@/components/SheetCalc";
 
 export interface EmployeesProps {
   id: number;
@@ -50,6 +50,7 @@ export type Payment = {
   name: string;
   userId: number;
   commission: number;
+  total: number;
   payment: {
     value: number;
   };
@@ -171,16 +172,19 @@ export default function Page() {
         body: JSON.stringify({ ids }),
       });
     },
+    mutationKey: ["deleteEmployee"],
     onSuccess: () => {
       refetch();
       table.toggleAllRowsSelected(false);
     },
   });
+  console.log(data);
+
   return (
     <div className="flex items-center justify-center p-4">
       <div className="w-full lg:max-w-3xl ">
         <div className="flex items-center py-4">
-          <Modal selectedEmployee={selectedEmployee} ref={sheetRef} />
+          <SheetCalc selectedEmployee={selectedEmployee} ref={sheetRef} />
           {table.getFilteredSelectedRowModel().rows.length ? (
             <>
               {isLoading ? (
