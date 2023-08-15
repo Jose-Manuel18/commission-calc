@@ -172,7 +172,7 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
 
                   <Button variant={"outline"} className="cursor-pointer ">
                     {" "}
-                    ${totalCommission.toFixed(2)}
+                    ${totalCommission.toLocaleString()}
                   </Button>
                 </div>
               </CardFooter>

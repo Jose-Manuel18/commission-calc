@@ -63,27 +63,32 @@ export function LastPayments({
             <TableRow>
               <TableHead>Monto</TableHead>
               <TableHead>Fecha</TableHead>
-              <TableHead>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() =>
-                        mutate({
-                          ids: employeePayments.map((payment) => payment.id),
-                          employeeId: employeePayments[0].employeeId,
-                        })
-                      }
-                    >
-                      Eliminar todos
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+              <TableHead className="flex items-center justify-center">
+                {isMutating ? (
+                  <Loader2 className="h-4 w-4 animate-spin " />
+                ) : (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() =>
+                          mutate({
+                            ids: employeePayments.map((payment) => payment.id),
+                            employeeId: employeePayments[0].employeeId,
+                          })
+                        }
+                      >
+                        Eliminar todos
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -106,7 +111,7 @@ export function LastPayments({
                       hour12: true,
                     })}
                   </TableCell>
-                  <TableCell className="text-left">
+                  <TableCell className="flex justify-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -116,6 +121,7 @@ export function LastPayments({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
+                          className="cursor-pointer"
                           onClick={() => {
                             mutate({
                               ids: [payment.id],
