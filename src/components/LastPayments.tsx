@@ -18,11 +18,12 @@ import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { apiUrls } from "@/utils/apiUrls";
 
-interface EmployeePayments {
+export interface EmployeePayments {
   id: number;
   date: Date;
   value: number;
   employeeId: number;
+  monto: number;
 }
 interface LastPaymentsProps {
   employeePayments?: EmployeePayments[];
@@ -54,6 +55,7 @@ export function LastPayments({
 
     onSuccess: refetch,
   });
+  console.log("monto", employeePayments);
 
   return (
     <div className="rounded-b-md border">
@@ -62,6 +64,7 @@ export function LastPayments({
           <TableHeader>
             <TableRow>
               <TableHead>Monto</TableHead>
+              <TableHead>Pago</TableHead>
               <TableHead>Fecha</TableHead>
               <TableHead className="flex items-center justify-center">
                 {isMutating ? (
@@ -98,6 +101,9 @@ export function LastPayments({
               return (
                 <TableRow key={index}>
                   <TableCell className="">
+                    ${payment.monto.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="">
                     ${payment.value.toLocaleString()}
                   </TableCell>
                   <TableCell className="text-left">
@@ -111,7 +117,7 @@ export function LastPayments({
                       hour12: true,
                     })}
                   </TableCell>
-                  <TableCell className="flex justify-center">
+                  <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">

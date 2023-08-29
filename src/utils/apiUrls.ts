@@ -6,7 +6,6 @@ export const apiUrls = {
   employee: {
     getEmployee: (id: number) => `/api/employee/${id}`,
     createEmployee: "/api/employee",
-    // updateEmployee: "/api/employee",
     deleteEmployee: "/api/employee",
   },
   payment: {

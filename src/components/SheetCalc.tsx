@@ -22,7 +22,7 @@ import { apiUrls } from "@/utils/apiUrls";
 import { Payment } from "@/app/page";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
 import React from "react";
 interface SelectedEmployee {
   selectedEmployee: Payment | null;
@@ -32,17 +32,20 @@ interface EmployeePayments {
   date: Date;
   value: number;
   employeeId: number;
+  monto: number;
 }
 export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
   ({ selectedEmployee }, ref) => {
     const [dealValue, setDealValue] = React.useState<number>(0);
     const [totalCommission, setTotalCommission] = React.useState<number>(0);
+    const [monto, setMonto] = React.useState<number>(0);
     const montoRef = React.useRef<HTMLInputElement>(null);
     const calculateCommission = () => {
       if (selectedEmployee?.commission) {
         const commissionAmount =
           dealValue * (selectedEmployee?.commission / 100);
         setTotalCommission((prevTotal) => prevTotal + commissionAmount);
+        setMonto((prevTotal) => prevTotal + dealValue);
         setDealValue(0);
         if (montoRef.current) {
           montoRef.current.value = "";
@@ -60,7 +63,7 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
         if (!selectedEmployee?.id) return Promise.resolve([]);
         try {
           const response = await fetch(
-            apiUrls.payment.getPayment(selectedEmployee.id),
+            apiUrls.payment.getPayment(selectedEmployee?.id),
             {
               method: "GET",
               headers: {
@@ -91,6 +94,7 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
               body: JSON.stringify({
                 employeeId: selectedEmployee?.id,
                 value: totalCommission,
+                monto: monto,
               }),
             });
           }
@@ -99,9 +103,10 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
         }
       },
       onSuccess: () => {
-        refetch();
         setDealValue(0);
         setTotalCommission(0);
+        setMonto(0);
+        refetch();
       },
     });
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +117,7 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
       (acc, curr) => acc + curr.value,
       selectedEmployee?.total ?? 0,
     );
+    console.log("monto", employeePayments);
 
     return (
       <AlertDialog>
@@ -156,11 +162,15 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
                     Guardando
                   </Button>
                 ) : (
-                  <Button onClick={() => mutate(totalCommission)}>
+                  <Button
+                    onClick={() => {
+                      mutate(totalCommission);
+                    }}
+                  >
                     Guardar
                   </Button>
                 )}
-                <div>
+                <div className="flex flex-row">
                   <Button
                     onClick={calculateCommission}
                     variant={"secondary"}
@@ -169,11 +179,20 @@ export const SheetCalc = forwardRef<HTMLButtonElement, SelectedEmployee>(
                     {" "}
                     Sumar
                   </Button>
-
-                  <Button variant={"outline"} className="cursor-pointer ">
-                    {" "}
-                    ${totalCommission.toLocaleString()}
-                  </Button>
+                  <div className="flex flex-row items-center">
+                    <Button variant={"outline"} className="cursor-pointer ">
+                      {" "}
+                      ${totalCommission.toLocaleString()}
+                    </Button>
+                    {totalCommission === 0 ? null : (
+                      <Trash
+                        onClick={() => {
+                          setTotalCommission(0);
+                        }}
+                        className="ml-2 h-4 w-4  cursor-pointer hover:scale-110 hover:text-red-500 active:scale-95"
+                      />
+                    )}
+                  </div>
                 </div>
               </CardFooter>
             </Card>
