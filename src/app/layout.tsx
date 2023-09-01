@@ -25,7 +25,7 @@ export default function RootLayout({
 
         <meta name="description" content="Best PWA App in the world" />
 
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#e80000" />
 
         <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" />
         <link
@@ -68,7 +68,7 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1.0, viewport-fit=cover"
         />
 
-        <link
+        {/* <link
           rel="apple-touch-startup-image"
           media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
           href="/public/splash-screens/iPhone_14_Pro_Max_landscape.png"
@@ -237,7 +237,7 @@ export default function RootLayout({
           rel="apple-touch-startup-image"
           media="screen and (device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
           href="/public/splash-screens/8.3__iPad_Mini_portrait.png"
-        />
+        /> */}
       </head>
       <body className={inter.className}>
         <Providers>
